@@ -42,12 +42,12 @@ cli@~1.0.0:
     exit "0.1.2"
     glob "^7.1.1"
 
-colors@*:
+colors@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
   integrity sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==
 
-commander@*:
+commander@^13.0.0:
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-13.0.0.tgz#1b161f60ee3ceb8074583a0f95359a4f8701845c"
   integrity sha512-oPYleIY8wmTVzkvQq10AEok6YcTC4sRUBl8F9gVuwchGVUCTbl/vhLTaQqutuuySYOsu8YTgV+OxKc/8Yvx+mQ==
@@ -173,7 +173,7 @@ isarray@0.0.1:
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-0.0.1.tgz#8a18acfca9a8f4177e09abfc6038939b05d1eedf"
   integrity sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==
 
-jshint@*:
+jshint@^2.13.6:
   version "2.13.6"
   resolved "https://registry.yarnpkg.com/jshint/-/jshint-2.13.6.tgz#3679a2687a3066fa9034ef85d8c305613a31eec6"
   integrity sha512-IVdB4G0NTTeQZrBoM8C5JFVLjV2KtZ9APgybDA1MK73xb09qFs0jCXyQLnCOp1cSZZZbvhq/6mfXHUTaDkffuQ==
@@ -186,7 +186,7 @@ jshint@*:
     minimatch "~3.0.2"
     strip-json-comments "1.0.x"
 
-jsonlint@*:
+jsonlint@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/jsonlint/-/jsonlint-1.6.3.tgz#cb5e31efc0b78291d0d862fbef05900adf212988"
   integrity sha512-jMVTMzP+7gU/IyC6hvKyWpUU8tmTkK5b3BPNuMI9U8Sit+YAWLlZwB6Y6YrdCxfg2kNz05p3XY3Bmm4m26Nv3A==
@@ -194,7 +194,7 @@ jsonlint@*:
     JSV "^4.0.x"
     nomnom "^1.5.x"
 
-jsonminify@*:
+jsonminify@^0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/jsonminify/-/jsonminify-0.4.2.tgz#fe6fb09391227e856f8c7c0761ff11b497b61fe8"
   integrity sha512-mEtP5ECD0293D+s45JhDutqF5mFCkWY8ClrPFxjSFR2KUoantofky7noSzyKnAnD9Gd8pXHZSUd5bgzLDUBbfA==

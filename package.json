@@ -27,13 +27,13 @@
         "url": "git@github.com:fkei/node-mjson.git"
     },
     "dependencies": {
-        "commander": "*",
-        "jsonminify": "*",
-        "colors": "*",
-        "jsonlint": "*"
+        "colors": "^1.4.0",
+        "commander": "^13.0.0",
+        "jsonlint": "^1.6.3",
+        "jsonminify": "^0.4.2"
     },
     "devDependencies": {
-        "jshint": "*"
+        "jshint": "^2.13.6"
     },
     "engines": {
         "node": ">=0.8.0",
