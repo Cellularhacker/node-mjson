@@ -4,38 +4,44 @@
  * @fileOverview mjson command-line
  * @name index.js
  * @author Kei Funagayama <kei.topaz@gmail.com>
+ * @modifies Cellularhacker <wva3cdae@gmail.com>
  */
 
-var fs = require('fs');
-var commander = require('commander');
-var jsonminify = require('jsonminify');
-var colors = require('colors');
-var jsonlint = require('jsonlint');
-var VERSION = '0.4.2';
+const fs = require('fs');
+const {Command} = require('commander');
+const jsonminify = require('jsonminify');
+const colors = require('colors');
+const jsonlint = require('jsonlint');
+
+const packageJson = fs.readFileSync('package.json');
+const VERSION = packageJson.version;
+
+const cmd = new Command();
 
 //////////
 
-var debug = function () {};
+let debug = function () {
+};
 
-var isFileSync = function (p) {
+const isFileSync = function (p) {
     if (!fs.existsSync(p)) {
         return false;
     }
-    var stats = fs.statSync(p);
+    const stats = fs.statSync(p);
     return stats.isFile();
 };
 
-var readJsonSync = function (path) {
-    var raw = fs.readFileSync(path, commander.encode);
-    return raw;
+const readJsonSync = function (path, encoding = 'utf-8') {
+    return fs.readFileSync(path, encoding);
 };
 
-var minify = function (raw, color) {
-    var output = '';
+const minify = function (raw, color) {
+    let output = '';
     raw = jsonminify(raw);
+    const indent = cmd.getOptionValue('indent');
 
     try {
-        output = JSON.stringify(JSON.parse(raw), null, commander.indent);
+        output = JSON.stringify(JSON.parse(raw), null, indent);
     } catch (e1) {
         try {
             jsonlint.parse(raw);
@@ -43,9 +49,9 @@ var minify = function (raw, color) {
             throw e2;
         }
     }
-    if (color && commander.color) {
+    if (color) {
         debug('color on');
-        output = output.replace(/\"(.*?)\"/g, "\"$1\"".green);
+        output = output.replace(/"(.*?)"/g, "\"$1\"".green);
         //output = output.replace(/\"(.*?)\"/g, colors['red']("\"$1\""));
     } else {
         debug('color off');
@@ -54,16 +60,15 @@ var minify = function (raw, color) {
 
 };
 
-
 //////////
 
 /**
  * STDIN -> STDOUT
  */
-var stdin2stdout = function () {
-    var stdin = '';
+const stdin2stdout = function () {
+    let stdin = '';
     process.stdin.resume();
-    process.stdin.setEncoding('utf8');
+    process.stdin.setEncoding('utf-8');
 
     process.stdin.on('data', function (chunk) {
         stdin += chunk;
@@ -71,7 +76,7 @@ var stdin2stdout = function () {
     });
 
     process.stdin.on('end', function () {
-        var output = minify(stdin, true);
+        const output = minify(stdin, true);
         process.stdout.write(output);
     });
     return 0;
@@ -80,16 +85,17 @@ var stdin2stdout = function () {
 /**
  * FILE -> STDOUT
  */
-var file2stdout = function (path) {
+const file2stdout = function (path) {
     if (path) {
-        commander.src = path;
+        cmd.setOptionValue('src', path);
     }
+    const cmdSrc = cmd.getOptionValue('src');
 
-    if (!isFileSync(commander.src)) {
-        console.error('--src or -s file can not be read. --src:', commander.src);
+    if (!isFileSync(cmdSrc)) {
+        console.error('--src or -s file can not be read. --src:', cmdSrc);
         return 2;
     }
-    var output = readJsonSync(commander.src);
+    let output = readJsonSync(cmdSrc);
     output = minify(output, true);
     process.stdout.write(output);
 
@@ -99,13 +105,17 @@ var file2stdout = function (path) {
 /**
  * FILE -> FILE
  */
-var file2file = function () {
-    if (!isFileSync(commander.src)) {
-        console.error('--src or -s file can not be read. --src:', commander.src);
+const file2file = function () {
+    const cmdSrc = cmd.getOptionValue('src');
+
+    if (!isFileSync(cmdSrc)) {
+        console.error('--src or -s file can not be read. --src:', cmdSrc);
         return 2;
     }
+    const cmdOut = cmd.getOptionValue('out');
+    const cmdEncode = cmd.getOptionValue('encode');
 
-    var output = readJsonSync(commander.src);
+    let output = readJsonSync(cmdSrc, cmdEncode);
     output = minify(output, false);
 
     // write
@@ -113,26 +123,25 @@ var file2file = function () {
     debug(output);
     debug('-- data end');
 
-    if (commander.force) {
-        debug('Overwrite remove output file. path:', commander.out);
-        fs.unlinkSync(commander.out);
+    if (cmd.getOptionValue('force')) {
+        debug('Overwrite remove output file. path:', cmdOut);
+        fs.unlinkSync(cmdOut);
     }
 
-    if (isFileSync(commander.out)) {
-        console.error('--out or -o file already exists --out:', commander.out);
+    if (isFileSync(cmdOut)) {
+        console.error('--out or -o file already exists --out:', cmdOut);
         return 2;
     }
 
-    fs.writeFileSync(commander.out, output, commander.encode);
-    console.info('output:', commander.out);
+    fs.writeFileSync(cmdOut, output, cmdEncode);
+    console.info('output:', cmdOut);
 
     return 0;
-
 };
 
 //////////
 
-var main = exports.main = function main () {
+const main = exports.main = function main() {
     colors.setTheme({
         silly: 'rainbow',
         input: 'grey',
@@ -148,7 +157,7 @@ var main = exports.main = function main () {
         title: 'yellow'
     });
 
-    commander
+    cmd
         .version(VERSION)
         .description('Formatted output to the standard output, standard input (string JSON)')
         .option('-d --debug', 'debug mode')
@@ -156,16 +165,16 @@ var main = exports.main = function main () {
         .option('-i --indent <indent>', 'indent string (default: space 4)', String, '    ')
         .option('-s --src <src>', 'Read file path', String)
         .option('-o --out <out>', 'Write file path', String)
-        .option('-e --encode <encode>', 'Read/Write file encode. default) utf8', String, 'utf8')
+        .option('-e --encode <encode>', 'Read/Write file encode. default) utf-8', String, 'utf-8')
         .option('-f --force', 'Overwrite output file')
         .parse(process.argv)
     ;
-    if (commander.debug) {
-        debug = function() {
-            var msg = "";
-            var ary = Array.prototype.slice.call(arguments);
-            for (var i = 0; i < ary.length; i++) {
-                0 < i ? msg += ' '+ary[i]: msg+=ary[i];
+    if (cmd.getOptionValue('debug')) {
+        debug = function () {
+            let msg = "";
+            const ary = Array.prototype.slice.call(arguments);
+            for (let i = 0; i < ary.length; i++) {
+                0 < i ? msg += ' ' + ary[i] : msg += ary[i];
             }
 
             console.error('debug:'.debug, msg);
@@ -174,18 +183,20 @@ var main = exports.main = function main () {
         console.info("info:".info, "debug mode.");
     }
 
-    var ret = 0;
+    let ret = 0;
+    const cmdSrc = cmd.getOptionValue('src');
+    const cmdOut = cmd.getOptionValue('out');
 
     //console.log(commander);
-    if (0 < commander.args.length) {
+    if (0 < cmd.args.length) {
         debug('select file2stdout args');
-        ret = file2stdout(commander.args[0]);
+        ret = file2stdout(cmd.args[0]);
         process.exit(ret);
-    } else if (commander.src && commander.out) {
+    } else if (cmdSrc && cmdOut) {
         debug('select file2file');
         ret = file2file();
         process.exit(ret);
-    } else if (commander.src) {
+    } else if (cmdSrc) {
         debug('select file2stdout');
         ret = file2stdout();
         process.exit(ret);

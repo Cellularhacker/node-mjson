@@ -1,6 +1,6 @@
 {
     "name": "mjson",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "Command : [JSON format string](stdin) -> mjson.js -> [JSON shaping string](stdout)",
     "keywords": [
         "node",
@@ -36,8 +36,8 @@
         "jshint": "^2.13.6"
     },
     "engines": {
-        "node": ">=0.8.0",
-        "npm": ">=1.1.0"
+        "node": ">=8.5.0",
+        "npm": ">=5.0.0"
     },
     "os": [
         "darwin",
